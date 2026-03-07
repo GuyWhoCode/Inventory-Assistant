@@ -11,6 +11,11 @@ const dbConnection = new Pool({
 
 // Ensure the ITEMS table exists
 async function initDB() {
+    // await dbConnection.query(`
+    //     DROP TABLE IF EXISTS ITEMS
+    // `);
+
+
     await dbConnection.query(`
     CREATE TABLE IF NOT EXISTS ITEMS (
         id SERIAL PRIMARY KEY,
@@ -28,19 +33,19 @@ export async function POST(req: NextRequest) {
     try {
         await initDB();
 
-        const { name, description, quantity, expiration, usage_rate } = await req.json();
-
-        if (!name) {
+        const { name, quantity, expiration } = await req.json();
+        if (!name || typeof name !== "string") {
             return NextResponse.json(
-                { error: "Field 'name' is required" },
+                { error: "Field 'name' is required and must be a string" },
                 { status: 400 },
             );
         }
 
         const result = await dbConnection.query(
-            `INSERT INTO ITEMS (name, description, quantity, expiration, usage_rate) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [name, description ?? "", quantity ?? 0, expiration ?? 0, usage_rate ?? 0],
+            `INSERT INTO ITEMS (name, quantity, expiration) VALUES ($1, $2, $3) RETURNING *`,
+            [name, quantity, expiration],
         );
+
         return NextResponse.json({ item: result.rows[0] }, { status: 201 });
     } catch (err) {
         console.error("DB error:", err);
