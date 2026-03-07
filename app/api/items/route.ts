@@ -1,38 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Pool } from "pg";
+import { db as dbConnection } from "@/lib/db";
 
-const dbConnection = new Pool({
-    host: "localhost",
-    port: 5433,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-});
-
-// Ensure the ITEMS table exists
-async function initDB() {
-    // await dbConnection.query(`
-    //     DROP TABLE IF EXISTS ITEMS
-    // `);
-
-
-    await dbConnection.query(`
-    CREATE TABLE IF NOT EXISTS ITEMS (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        quantity INTEGER,
-        expiration DATE,
-        usage_rate VARCHAR(50),
-        created_at TIMESTAMPTZ DEFAULT NOW()
-    )
-  `);
-}
 
 // POST /api/items — add a new item
 export async function POST(req: NextRequest) {
     try {
-        await initDB();
-
         const { name, quantity, expiration } = await req.json();
         if (!name || typeof name !== "string") {
             return NextResponse.json(
@@ -59,7 +31,6 @@ export async function POST(req: NextRequest) {
 // GET /api/items — list all items
 export async function GET() {
     try {
-        await initDB();
         const result = await dbConnection.query(
             `SELECT * FROM ITEMS ORDER BY created_at DESC`,
         );
@@ -77,7 +48,6 @@ export async function GET() {
 // DELETE /api/items — delete an item by ID
 export async function DELETE(req: NextRequest) {
     try {
-        await initDB();
         const { id } = await req.json();
         if (!id) {
             return NextResponse.json(

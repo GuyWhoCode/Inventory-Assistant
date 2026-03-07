@@ -1,28 +1,15 @@
 "use client";
-
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { InputGroup } from "@/components/ui/input-group";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Field } from "@/components/ui/field";
-import { InputGroup } from "@/components/ui/input-group";
-import { DataTable } from "@/components/datatable";
-import { columns } from "@/components/columns";
+import { InventoryItem } from "./InventoryItem";
 
-type InventoryItem = {
-    name: string;
-    quantity: number;
-    expiration: string;
-};
+
 
 type Props = {
     defaultValues: InventoryItem;
@@ -175,69 +162,4 @@ function InventoryItemCard({ defaultValues }: Props) {
     );
 }
 
-function DeleteItemForm() {
-    const [deleteId, setDeleteId] = useState<string>("");
-
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-
-                fetch("/api/items", {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: deleteId }),
-                })
-                    .then(() => toast.success("Item deleted"))
-                    .catch((err) => {
-                        console.error("Error deleting item:", err);
-                        toast.error("Failed to delete item. Please try again.");
-                    });
-            }}
-        >
-            <Field>
-                <Label htmlFor="delete-id">Item ID to delete</Label>
-                <InputGroup>
-                    <Input
-                        id="delete-id"
-                        type="number"
-                        min={1}
-                        step={1}
-                        value={deleteId}
-                        onChange={(e) => setDeleteId(e.target.value)}
-                    />
-                </InputGroup>
-            </Field>
-            <Button type="submit" variant="destructive">
-                Delete Item
-            </Button>
-        </form>
-    );
-}
-
-function HomePage() {
-    const data: InventoryItem[] = [
-        { name: "Milk", quantity: 2, expiration: "2026-03-10" },
-        { name: "Eggs", quantity: 12, expiration: "2026-03-15" },
-    ];
-
-
-    return (
-        <div>
-            <h1>Inventory Assistant</h1>
-            <p>Welcome to the Inventory Assistant!</p>
-
-            <h2>Initialize Inventory</h2>
-            <InventoryItemCard
-                defaultValues={{ name: "", quantity: 0, expiration: "" }}
-            />
-
-            <h2>Delete Item</h2>
-            <DeleteItemForm />
-
-            <DataTable columns={columns} data={data} />
-        </div>
-    );
-}
-
-export default HomePage;
+export default InventoryItemCard
