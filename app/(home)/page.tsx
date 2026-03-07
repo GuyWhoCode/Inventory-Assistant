@@ -3,6 +3,7 @@ import { columns } from "@/components/columns";
 import Link from "next/link";
 import { InventoryItem } from "./InventoryItem";
 import ItemsClient from "./ItemsClient";
+import NotificationPanel from "./NotificationPanel";
 
 function HomePage() {
     const data: InventoryItem[] = [
@@ -17,11 +18,21 @@ function HomePage() {
             <br />
             <Link href="/items/1">Item Details View</Link>
 
-            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">Inventory Assistant</h1>
+            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+                Inventory Assistant
+            </h1>
 
             <DataTable columns={columns} data={data} />
 
-            <ItemsClient />
+            <div className="flex h-screen overflow-hidden">
+                {/* Main content */}
+                <main className="flex-1 overflow-y-auto">
+                    <ItemsClient />
+                </main>
+
+                {/* Persistent notification column */}
+                <NotificationPanel />
+            </div>
         </div>
     );
 }
