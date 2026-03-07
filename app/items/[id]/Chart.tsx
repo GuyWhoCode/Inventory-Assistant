@@ -1,13 +1,8 @@
 "use client";
-
-import { TrendingUp } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-
+import { LineChart, Line, CartesianGrid, XAxis } from "recharts";
 import {
     Card,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -18,81 +13,59 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart";
 
-export const description = "A line chart with dots";
-
-const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-];
-
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
+    usage_rate: {
+        label: "Usage",
         color: "var(--chart-1)",
-    },
-    mobile: {
-        label: "Mobile",
-        color: "var(--chart-2)",
     },
 } satisfies ChartConfig;
 
-export function ChartLineDots() {
+type UsageDataPoint = {
+    day: number;
+    usage_rate: number;
+};
+
+const placeholderData: UsageDataPoint[] = Array.from({ length: 30 }, (_, i) => ({
+    day: i + 1,
+    usage_rate: Math.floor(Math.random() * 50) + 10,
+}));
+
+export function ChartLineDots({ data = placeholderData }: { data?: UsageDataPoint[] }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Line Chart - Dots</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>Usage over Last 30 Days</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
                     <LineChart
                         accessibilityLayer
-                        data={chartData}
-                        margin={{
-                            left: 12,
-                            right: 12,
-                        }}
+                        data={data}
+                        margin={{ left: 12, right: 12 }}
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
-                            dataKey="month"
+                            dataKey="day"
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickFormatter={(value) => `Day ${value}`}
                         />
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Line
-                            dataKey="desktop"
+                            dataKey="usage_rate"
                             type="natural"
-                            stroke="var(--color-desktop)"
+                            stroke="var(--color-usage_rate)"
                             strokeWidth={2}
-                            dot={{
-                                fill: "var(--color-desktop)",
-                            }}
-                            activeDot={{
-                                r: 6,
-                            }}
+                            dot={{ fill: "var(--color-usage_rate)" }}
+                            activeDot={{ r: 6 }}
                         />
                     </LineChart>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="flex-col items-start gap-2 text-sm">
-                <div className="flex gap-2 leading-none font-medium">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
-                </div>
-            </CardFooter>
         </Card>
     );
 }
