@@ -1,11 +1,6 @@
 "use client";
 import { LineChart, Line, CartesianGrid, XAxis } from "recharts";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     ChartContainer,
     ChartTooltip,
@@ -25,12 +20,19 @@ type UsageDataPoint = {
     usage_rate: number;
 };
 
-const placeholderData: UsageDataPoint[] = Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    usage_rate: Math.floor(Math.random() * 50) + 10,
-}));
+const placeholderData: UsageDataPoint[] = Array.from(
+    { length: 30 },
+    (_, i) => ({
+        day: i + 1,
+        usage_rate: Math.floor(Math.random() * 50) + 10,
+    }),
+);
 
-export function ChartLineDots({ data = placeholderData }: { data?: UsageDataPoint[] }) {
+export function ChartLineDots({
+    data = placeholderData,
+}: {
+    data?: UsageDataPoint[];
+}) {
     return (
         <Card>
             <CardHeader>
@@ -49,6 +51,10 @@ export function ChartLineDots({ data = placeholderData }: { data?: UsageDataPoin
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
+                            ticks={Array.from(
+                                { length: 15 },
+                                (_, i) => (i + 1) * 2,
+                            )}
                             tickFormatter={(value) => `Day ${value}`}
                         />
                         <ChartTooltip

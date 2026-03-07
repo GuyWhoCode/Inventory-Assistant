@@ -44,24 +44,3 @@ export async function GET() {
         );
     }
 }
-
-// DELETE /api/items — delete an item by ID
-export async function DELETE(req: NextRequest) {
-    try {
-        const { id } = await req.json();
-        if (!id) {
-            return NextResponse.json(
-                { error: "Field 'id' is required" },
-                { status: 400 },
-            );
-        }
-        await dbConnection.query(`DELETE FROM ITEMS WHERE id = $1`, [id]);
-        return NextResponse.json({ message: "Item deleted" }, { status: 200 });
-    } catch (err) {
-        console.error("DB error:", err);
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 },
-        );
-    }
-}
