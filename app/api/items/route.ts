@@ -5,7 +5,7 @@ import { db as dbConnection } from "@/lib/db";
 // POST /api/items — add a new item
 export async function POST(req: NextRequest) {
     try {
-        const { name, quantity, expiration } = await req.json();
+        const { name, quantity, expiration, usageRate } = await req.json();
         if (!name || typeof name !== "string") {
             return NextResponse.json(
                 { error: "Field 'name' is required and must be a string" },
@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
         }
 
         const result = await dbConnection.query(
-            `INSERT INTO ITEMS (name, quantity, expiration) VALUES ($1, $2, $3) RETURNING *`,
-            [name, quantity, expiration],
+            `INSERT INTO ITEMS (name, quantity, expiration, usage_rate) VALUES ($1, $2, $3, $4) RETURNING *`,
+            [name, quantity, expiration, usageRate],
         );
 
         return NextResponse.json({ item: result.rows[0] }, { status: 201 });

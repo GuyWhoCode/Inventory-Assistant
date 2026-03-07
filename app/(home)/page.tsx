@@ -1,5 +1,3 @@
-"use client";
-
 import { DataTable } from "@/components/datatable";
 import { columns } from "@/components/columns";
 import Link from "next/link";

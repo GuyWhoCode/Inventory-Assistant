@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Leaf } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { ChartLineDots } from "./Chart";
 import { useRouter } from "next/navigation";
 
 type Item = {
@@ -102,8 +101,6 @@ function ItemCard({ item }: { item: Item }) {
                 </Link>
                 {isDirty && <Button onClick={handleSave}>Save Changes</Button>}
             </CardFooter>
-
-            <ChartLineDots />
         </Card>
     );
 }

@@ -19,6 +19,11 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export async function initDB() {
+    // await db.query(`
+    //     DROP TABLE IF EXISTS items;
+    //     `);
+
+
     await db.query(`
     CREATE TABLE IF NOT EXISTS ITEMS (
         id SERIAL PRIMARY KEY,
@@ -28,5 +33,5 @@ export async function initDB() {
         usage_rate VARCHAR(50),
         created_at TIMESTAMPTZ DEFAULT NOW()
     )
-  `);
+      `);
 }

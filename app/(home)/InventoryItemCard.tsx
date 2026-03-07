@@ -9,20 +9,24 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { InventoryItem } from "./InventoryItem";
 
-
-
 type Props = {
     defaultValues: InventoryItem;
 };
 
+function randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function InventoryItemCard({ defaultValues }: Props) {
+    const USAGE_RATE_MAXIMUM = 20;
+    
     const [name, setName] = useState(defaultValues.name);
     const [quantity, setQuantity] = useState<number>(defaultValues.quantity);
     const [expiration, setExpiration] = useState(defaultValues.expiration);
-
     const [errors, setErrors] = useState<{ name?: string; quantity?: string }>(
         {},
     );
+
 
     function validate(values: { name: string; quantity: number }) {
         const next: typeof errors = {};
@@ -43,13 +47,14 @@ function InventoryItemCard({ defaultValues }: Props) {
             name: name.trim(),
             quantity,
             expiration,
+            usageRate: randomInt(1, USAGE_RATE_MAXIMUM),
         };
 
         if (!validate({ name: cleaned.name, quantity: cleaned.quantity }))
             return;
 
         try {
-            const addItem = await fetch("/api/items", {
+            await fetch("/api/items", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cleaned),
