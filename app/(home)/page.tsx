@@ -1,9 +1,8 @@
 import { DataTable } from "@/components/datatable";
 import { columns } from "@/components/columns";
 import Link from "next/link";
-import InventoryItemCard from "./InventoryItemCard";
 import { InventoryItem } from "./InventoryItem";
-
+import ItemsClient from "./ItemsClient";
 
 function HomePage() {
     const data: InventoryItem[] = [
@@ -16,21 +15,13 @@ function HomePage() {
             <h1>Pages</h1>
             <Link href="/initialize">Initialize Inventory</Link>
             <br />
-            <Link href="/">Dashboard View</Link>
-            <br />
             <Link href="/items/1">Item Details View</Link>
 
-            <h1>Inventory Assistant</h1>
-            <p>Welcome to the Inventory Assistant!</p>
-
-            <h2>Initialize Inventory</h2>
-            <InventoryItemCard
-                defaultValues={{ name: "", quantity: 0, expiration: "" }}
-            />
-
-            <h2>Delete Item</h2>
+            <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">Inventory Assistant</h1>
 
             <DataTable columns={columns} data={data} />
+
+            <ItemsClient />
         </div>
     );
 }
