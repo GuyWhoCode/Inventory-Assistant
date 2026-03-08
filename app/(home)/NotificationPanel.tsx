@@ -173,7 +173,6 @@ export default function NotificationPanel() {
 
     return (
         <aside className="flex flex-col h-full w-72 shrink-0 border-l bg-background">
-            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-2">
                     <h2 className="text-sm font-semibold">Notifications</h2>

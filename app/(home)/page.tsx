@@ -25,12 +25,10 @@ function HomePage() {
             <DataTable columns={columns} data={data} />
 
             <div className="flex h-screen overflow-hidden">
-                {/* Main content */}
                 <main className="flex-1 overflow-y-auto">
                     <ItemsClient />
                 </main>
 
-                {/* Persistent notification column */}
                 <NotificationPanel />
             </div>
         </div>
