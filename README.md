@@ -20,6 +20,8 @@ Estimated Time Spent:
 
 
 ### Test Commands:
+- bun test (or npm run test)
+- bun test:ui (or npm run test:ui)
 
 
 
@@ -63,7 +65,7 @@ Barcode scanner hybrid format for inventory entry.
 
 ### Known limitations:
 - All or nothing approach with AI image recognition. If AI can't recognize the object clearly, then it will not appear and must be manually inputted.
-
+- All items are supposed to have an expiration date. In the future, it should be optional whether an item has an expiration date or not.
 
 
 ## Design Document

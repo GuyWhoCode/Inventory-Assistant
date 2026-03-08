@@ -45,7 +45,7 @@ export default function ItemScanner() {
     };
 
     return (
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md" id="image-ai-scanner">
             <CardHeader>
                 <CardTitle className="text-sm">Scan Items</CardTitle>
             </CardHeader>
