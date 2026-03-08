@@ -3,7 +3,7 @@ Candidate Name: Jason Agus
 
 Scenario Chosen: AI-Powered "Green-Tech" Inventory Assistant
 
-Estimated Time Spent:
+Estimated Time Spent: 30 hours
 
 
 ## Quick Start:
@@ -69,10 +69,10 @@ Barcode scanner hybrid format for inventory entry.
 
 
 ## Design Document
-
+- in the deliverables folder.
 
 
 
 ## Video Overview
-
+https://www.youtube.com/watch?v=0uYiyKbaUAw
 
