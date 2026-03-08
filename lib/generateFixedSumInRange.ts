@@ -1,12 +1,10 @@
+import randomInt from "./randomInt";
+
 // Constants
 const COUNT = 30;
 const MIN_VALUE = 3;
 const MAX_VALUE = 35;
 
-// Generate a random integer between min and max (inclusive)
-function randomInt(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 export function generateFixedSumInRange(desiredAverage: number): number[] {
     const TARGET_SUM = COUNT * desiredAverage;

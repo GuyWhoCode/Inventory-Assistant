@@ -16,8 +16,6 @@ function HomePage() {
         <div>
             <h1>Pages</h1>
             <Link href="/initialize">Initialize Inventory</Link>
-            <br />
-            <Link href="/items/1">Item Details View</Link>
 
             <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
                 Inventory Assistant

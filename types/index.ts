@@ -6,3 +6,9 @@ export type Item = {
     expiration: string;
     usage_rate: number;
 };
+
+export type UsageLog = {
+    item_id: number;
+    usage_amount: number;
+    logged_at: Date;
+};

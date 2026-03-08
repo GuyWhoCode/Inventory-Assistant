@@ -8,14 +8,11 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
 import { InventoryItem } from "./InventoryItem";
+import randomInt from "@/lib/randomInt";
 
 type Props = {
     defaultValues: InventoryItem;
 };
-
-function randomInt(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 function InventoryItemCard({ defaultValues }: Props) {
     const USAGE_RATE_MAXIMUM = 20;

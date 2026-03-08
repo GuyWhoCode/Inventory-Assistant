@@ -20,7 +20,10 @@ if (process.env.NODE_ENV !== "production") {
 
 export async function initDB() {
     // await db.query(`
-    //     DROP TABLE IF EXISTS items;
+    //     DROP TABLE IF EXISTS ITEMS;
+    //     `);
+    // await db.query(`
+    //     DROP TABLE IF EXISTS USAGE_LOGS;
     //     `);
 
 
@@ -32,6 +35,15 @@ export async function initDB() {
         expiration DATE,
         usage_rate VARCHAR(50),
         created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+      `);
+
+    await db.query(`
+    CREATE TABLE IF NOT EXISTS USAGE_LOGS (
+        id SERIAL PRIMARY KEY,
+        item_id INTEGER REFERENCES ITEMS(id) ON DELETE CASCADE,
+        usage_amount INTEGER,
+        logged_at TIMESTAMPTZ DEFAULT NOW()
     )
       `);
 }
