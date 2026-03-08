@@ -5,12 +5,12 @@ import { ItemsProvider } from "./ItemsContext";
 import ProcessInventoryButton from "./ProcessInventoryButton";
 
 
-function InitializeInfo() {
+function AddNewInventory() {
     return (
         <ItemsProvider>
             <div>
                 <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-                    Initialize Inventory
+                    Add New Inventory
                 </h1>
                 <EntryTabs />
                 <ItemsConfirmationTable />
@@ -24,4 +24,4 @@ function InitializeInfo() {
     );
 }
 
-export default InitializeInfo;
+export default AddNewInventory;
