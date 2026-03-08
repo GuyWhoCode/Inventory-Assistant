@@ -1,20 +1,17 @@
-export type Item = {
-    id: number;
+export interface ItemEntry {
     name: string;
     quantity: number;
-    created_at: string;
     expiration: string;
     usage_rate: number;
-};
+}
 
-export type UsageLog = {
+export interface Item extends ItemEntry {
+    id: number;
+    created_at: string;
+}
+
+export interface UsageLog {
     item_id: number;
     usage_amount: number;
     logged_at: Date;
-};
-
-export type InventoryItem = {
-    name: string;
-    quantity: number;
-    expiration: string;
-};
+}

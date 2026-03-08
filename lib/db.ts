@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 
 export async function initDB() {
     // await db.query(`
-    //     DROP TABLE IF EXISTS ITEMS;
+    //     DROP TABLE IF EXISTS ITEMS CASCADE;
     //     `);
     // await db.query(`
     //     DROP TABLE IF EXISTS USAGE_LOGS;

@@ -1,21 +1,15 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Item } from "@/types";
-import { ColumnDef, Row, Table } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { ItemEntry } from "@/types";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { useItems } from "./ItemsContext";
 
-declare module "@tanstack/react-table" {
-    interface TableMeta<TData extends RowData> {
-        updateData: (rowIndex: number, columnId: string, value: string) => void;
-    }
-}
 
 interface EditableCellProps {
     value: string | undefined;
-    row: Row<Item>;
+    row: Row<ItemEntry>;
     columnId: string;
-    table: Table<Item>;
     type?: string;
     className?: string;
 }
@@ -24,32 +18,33 @@ function EditableCell({
     value: initialValue,
     row,
     columnId,
-    table,
     type = "text",
     className,
 }: EditableCellProps) {
-    const [value, setValue] = useState(initialValue ?? "");
+    const { items, setItems } = useItems();
+    const value = items[row.index]?.[columnId as keyof ItemEntry] ?? "";
 
-    useEffect(() => {
-        setValue(initialValue ?? "");
-    }, [initialValue]);
-
-    const onBlur = () => {
-        table.options.meta?.updateData(row.index, columnId, value);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setItems((prev) =>
+            prev.map((item, i) =>
+                i === row.index
+                    ? { ...item, [columnId]: e.target.value }
+                    : item,
+            ),
+        );
     };
 
     return (
         <Input
             type={type}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onBlur={onBlur}
+            onChange={onChange}
             className={`h-8 w-full border-0 bg-transparent p-0 shadow-none focus-visible:ring-1 ${className ?? ""}`}
         />
     );
 }
 
-export const columns: ColumnDef<Item>[] = [
+export const columns: ColumnDef<ItemEntry>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -75,12 +70,11 @@ export const columns: ColumnDef<Item>[] = [
     {
         accessorKey: "name",
         header: "Name",
-        cell: ({ getValue, row, column, table }) => (
+        cell: ({ getValue, row, column }) => (
             <EditableCell
                 value={getValue<string>()}
                 row={row}
                 columnId={column.id}
-                table={table}
                 className="font-medium"
             />
         ),
@@ -88,12 +82,11 @@ export const columns: ColumnDef<Item>[] = [
     {
         accessorKey: "quantity",
         header: "Quantity",
-        cell: ({ getValue, row, column, table }) => (
+        cell: ({ getValue, row, column }) => (
             <EditableCell
                 value={String(getValue<number>())}
                 row={row}
                 columnId={column.id}
-                table={table}
                 type="number"
             />
         ),
@@ -101,12 +94,11 @@ export const columns: ColumnDef<Item>[] = [
     {
         accessorKey: "expiration",
         header: "Expiration",
-        cell: ({ getValue, row, column, table }) => (
+        cell: ({ getValue, row, column }) => (
             <EditableCell
                 value={getValue<string>()}
                 row={row}
                 columnId={column.id}
-                table={table}
                 type="date"
             />
         ),

@@ -2,6 +2,7 @@ import Link from "next/link";
 import EntryTabs from "./EntryTabs";
 import ItemsConfirmationTable from "./ItemsConfirmationTable";
 import { ItemsProvider } from "./ItemsContext";
+import ProcessInventoryButton from "./ProcessInventoryButton";
 
 
 function InitializeInfo() {
@@ -13,6 +14,8 @@ function InitializeInfo() {
                 </h1>
                 <EntryTabs />
                 <ItemsConfirmationTable />
+
+                <ProcessInventoryButton />
                 
                 <Link href="/">Go back to Dashboard</Link>
             </div>

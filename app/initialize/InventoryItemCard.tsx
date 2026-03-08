@@ -36,11 +36,9 @@ function InventoryItemCard() {
         e.preventDefault();
 
         const cleaned = {
-            id: Math.floor(Math.random() * 1000000),
             name: name.trim(),
             quantity,
             expiration,
-            created_at: new Date().toISOString(),
             usage_rate: 0
         };
 

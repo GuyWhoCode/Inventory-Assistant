@@ -1,25 +1,25 @@
 "use client";
 
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
-import { Item } from "@/types";
+import { ItemEntry } from "@/types";
 
 type ItemsContextType = {
-    items: Item[];
-    setItems: Dispatch<SetStateAction<Item[]>>;
-    addItem: (item: Item) => void;
-    deleteItems: (toDelete: Item[]) => void;
+    items: ItemEntry[];
+    setItems: Dispatch<SetStateAction<ItemEntry[]>>;
+    addItem: (item: ItemEntry) => void;
+    deleteItems: (toDelete: ItemEntry[]) => void;
 };
 
 const ItemsContext = createContext<ItemsContextType | null>(null);
 
 export function ItemsProvider({ children }: { children: ReactNode }) {
-    const [items, setItems] = useState<Item[]>([]);
+    const [items, setItems] = useState<ItemEntry[]>([]);
 
-    const addItem = (item: Item) => {
+    const addItem = (item: ItemEntry) => {
         setItems((prev) => [...prev, item]);
     };
 
-    const deleteItems = (toDelete: Item[]) => {
+    const deleteItems = (toDelete: ItemEntry[]) => {
         setItems((prev) => prev.filter((item) => !toDelete.includes(item)));
     };
 

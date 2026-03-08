@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db as dbConnection } from "@/lib/db";
 import { generateFixedSumInRange } from "@/lib/generateFixedSumInRange";
-import { UsageLog } from "@/types";
+import { ItemEntry, UsageLog } from "@/types";
 import randomInt from "@/lib/randomInt";
 
 async function seedUsageLogs(rows: UsageLog[] = []) {
@@ -18,7 +18,6 @@ async function seedUsageLogs(rows: UsageLog[] = []) {
         );
 
         await client.query("COMMIT");
-        console.log(`Seeded ${rows.length} items.`);
     } catch (err) {
         await client.query("ROLLBACK");
         console.error("Seed failed, transaction rolled back:", err);
@@ -35,38 +34,81 @@ function daysAgo(n: number): Date {
     return d;
 }
 
-// POST /api/items — add a new item
+// POST /api/items — add new items
 export async function POST(req: NextRequest) {
-    const USAGE_RATE_MAXIMUM = 20; // Max average usage rate for seeding
-
+    const USAGE_RATE_MAXIMUM = 20;
     try {
-        const { name, quantity, expiration } = await req.json();
-        if (!name || typeof name !== "string") {
+        const { items }: { items: ItemEntry[] } = await req.json();
+
+        if (!Array.isArray(items) || items.length === 0) {
             return NextResponse.json(
-                { error: "Field 'name' is required and must be a string" },
+                {
+                    error: "Field 'items' is required and must be a non-empty array",
+                },
                 { status: 400 },
             );
         }
 
-        const averageUsageRate = randomInt(1, USAGE_RATE_MAXIMUM);
-        // Initially set as random to generate test usage logs
+        for (const item of items) {
+            if (!item.name || typeof item.name !== "string") {
+                return NextResponse.json(
+                    { error: `Field 'name' is required and must be a string` },
+                    { status: 400 },
+                );
+            }
+        }
 
-        const result = await dbConnection.query(
-            `INSERT INTO ITEMS (name, quantity, expiration, usage_rate) VALUES ($1, $2, $3, $4) RETURNING *`,
-            [name, quantity, expiration, averageUsageRate],
-        );
+        const client = await dbConnection.connect();
 
-        seedUsageLogs(
-            generateFixedSumInRange(averageUsageRate).map(
-                (usage_rate, index) => ({
-                    item_id: result.rows[0].id,
-                    usage_amount: usage_rate,
-                    logged_at: daysAgo(index + 1),
-                }),
-            ),
-        );
+        try {
+            await client.query("BEGIN");
 
-        return NextResponse.json({ item: result.rows[0] }, { status: 201 });
+            const usageRates = items.map(() =>
+                randomInt(1, USAGE_RATE_MAXIMUM),
+            );
+
+            const values = items.flatMap(
+                ({ name, quantity, expiration }, i) => [
+                    name,
+                    quantity,
+                    expiration,
+                    usageRates[i],
+                ],
+            );
+
+            const placeholders = items
+                .map(
+                    (_, i) =>
+                        `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})`,
+                )
+                .join(", ");
+
+            const result = await client.query(
+                `INSERT INTO ITEMS (name, quantity, expiration, usage_rate) VALUES ${placeholders} RETURNING *`,
+                values,
+            );
+
+            await client.query("COMMIT");
+
+            result.rows.forEach((inserted, i) => {
+                seedUsageLogs(
+                    generateFixedSumInRange(usageRates[i]).map(
+                        (usage_rate, index) => ({
+                            item_id: inserted.id,
+                            usage_amount: usage_rate,
+                            logged_at: daysAgo(index + 1),
+                        }),
+                    ),
+                );
+            });
+
+            return NextResponse.json({ items: result.rows }, { status: 201 });
+        } catch (err) {
+            await client.query("ROLLBACK");
+            throw err;
+        } finally {
+            client.release();
+        }
     } catch (err) {
         console.error("DB error:", err);
         return NextResponse.json(
