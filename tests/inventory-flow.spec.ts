@@ -26,7 +26,7 @@ async function dismissToast(page: Page, pattern: RegExp) {
 }
 
 test.describe("Inventory Management User Flow", () => {
-    test("Happy Path: Complete inventory workflow from image upload to item editing", async ({
+    test("Happy Path: Complete inventory workflow from manual entry to item editing", async ({
         page,
     }) => {
         // Step 1: Navigate to the Add New Inventory page
