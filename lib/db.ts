@@ -23,12 +23,15 @@ export async function initDB() {
     if (initialized) return;
     initialized = true;
 
-    await db.query(`
+    if (process.env.DEVELOPER_MODE === "true") {
+        console.log("Developer mode enabled: resetting database...");
+        await db.query(`
         DROP TABLE IF EXISTS ITEMS CASCADE;
         `);
-    await db.query(`
+        await db.query(`
         DROP TABLE IF EXISTS USAGE_LOGS;
         `);
+    }
 
     await db.query(`
     CREATE TABLE IF NOT EXISTS ITEMS (

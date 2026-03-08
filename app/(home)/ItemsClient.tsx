@@ -187,7 +187,7 @@ export default function ItemsClient() {
                     <p className="text-muted-foreground text-sm">
                         No items match{" "}
                         <span className="font-mono font-medium">
-                            "{filterValue}"
+                            &quot;{filterValue}&quot;
                         </span>
                         .
                     </p>
