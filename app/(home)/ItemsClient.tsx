@@ -15,7 +15,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 async function fetchItems(): Promise<Item[]> {
     const res = await fetch(`/api/items`, {
@@ -64,7 +66,7 @@ function ItemCard({ item }: { item: Item }) {
     return (
         <Card
             className="cursor-pointer transition-colors hover:bg-muted/50"
-            id = {`item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
+            id={`item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
             onClick={handleClick}
         >
             <CardHeader className="pb-2">
@@ -108,6 +110,8 @@ function ItemCard({ item }: { item: Item }) {
 // ─── Main client component ───────────────────────────────────────────────────
 
 export default function ItemsClient() {
+    const [filterValue, setFilterValue] = useState("");
+
     const {
         data: items,
         isPending,
@@ -118,16 +122,44 @@ export default function ItemsClient() {
         queryFn: fetchItems,
     });
 
+    const filteredItems = items?.filter((item) =>
+        item.name.toLowerCase().includes(filterValue.toLowerCase()),
+    );
+
     return (
         <div className="p-6 max-w-6xl mx-auto space-y-6">
             <header className="flex items-baseline gap-3 border-b pb-4">
                 <h1 className="text-2xl font-bold tracking-tight">Items</h1>
                 {!isPending && items && (
                     <Badge variant="outline" className="font-mono">
-                        {items.length} entries
+                        {filteredItems?.length ?? 0} / {items.length} entries
                     </Badge>
                 )}
             </header>
+
+            {!isPending && items && items.length > 0 && (
+                <div className="relative w-full sm:max-w-sm">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="Filter by name…"
+                        value={filterValue}
+                        onChange={(e) => setFilterValue(e.target.value)}
+                        className="pl-8 pr-8"
+                        aria-label="Filter items by name"
+                    />
+                    {filterValue && (
+                        <button
+                            onClick={() => setFilterValue("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            aria-label="Clear filter"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+            )}
+
             {isPending && <LoadingState />}
             {isError && (
                 <Alert variant="destructive">
@@ -146,13 +178,31 @@ export default function ItemsClient() {
                         No items found.
                     </p>
                     <Button asChild>
-                        <Link href="/initialize">Initialize Inventory</Link>
+                        <Link href="/add">Add Inventory</Link>
                     </Button>
                 </div>
             )}
-            {items && items.length > 0 && (
+            {filteredItems && filteredItems.length === 0 && filterValue && (
+                <div className="flex flex-col items-center justify-center gap-2 py-24 text-center">
+                    <p className="text-muted-foreground text-sm">
+                        No items match{" "}
+                        <span className="font-mono font-medium">
+                            "{filterValue}"
+                        </span>
+                        .
+                    </p>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setFilterValue("")}
+                    >
+                        Clear filter
+                    </Button>
+                </div>
+            )}
+            {filteredItems && filteredItems.length > 0 && (
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {items.map((item) => (
+                    {filteredItems.map((item) => (
                         <ItemCard key={item.id} item={item} />
                     ))}
                 </section>
