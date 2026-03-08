@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Item } from "@/types";
+import { toast } from "sonner";
 
 function ItemCard({ item }: { item: Item }) {
     const router = useRouter();
@@ -28,14 +29,18 @@ function ItemCard({ item }: { item: Item }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, quantity }),
         });
+        toast.success("Item updated successfully");
+        router.refresh();
     }
 
     async function handleDelete() {
         try {
             await fetch(`/api/items/${item.id}`, { method: "DELETE" });
+            toast.success("Item deleted successfully");
             router.push("/");
         } catch (err) {
             console.error("Failed to delete item:", err);
+            toast.error("Failed to delete item. Please try again.");
         }
     }
 
@@ -50,8 +55,10 @@ function ItemCard({ item }: { item: Item }) {
                     usage_amount: loggedUsage,
                 }),
             });
+            toast.success(`Logged usage of ${loggedUsage} for ${item.name}`);
         } catch (err) {
             console.error("Failed to log usage:", err);
+            toast.error("Failed to log usage. Please try again.");
         }
         setLoggedUsage(0);
     };
@@ -120,7 +127,7 @@ function ItemCard({ item }: { item: Item }) {
                 {/* Log Usage */}
                 <div className="flex flex-col gap-2 px-6 border-l">
                     <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                        Log Today's Usage
+                        Log Today&apos;s Usage
                     </p>
                     <div className="flex items-center gap-2">
                         <Input
