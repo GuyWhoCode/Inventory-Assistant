@@ -7,7 +7,7 @@ import { InputGroup } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
-import { InventoryItem } from "./InventoryItem";
+import { InventoryItem } from "@/types";
 import randomInt from "@/lib/randomInt";
 
 type Props = {

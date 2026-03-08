@@ -12,3 +12,9 @@ export type UsageLog = {
     usage_amount: number;
     logged_at: Date;
 };
+
+export type InventoryItem = {
+    name: string;
+    quantity: number;
+    expiration: string;
+};

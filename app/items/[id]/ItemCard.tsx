@@ -41,8 +41,18 @@ function ItemCard({ item }: { item: Item }) {
 
     const handleLogUsage = () => {
         if (loggedUsage <= 0) return;
-        // wire to your DB update here
-        console.log("Logging usage:", loggedUsage);
+        try {
+            fetch("/api/usage-log", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    item_id: item.id,
+                    usage_amount: loggedUsage,
+                }),
+            });
+        } catch (err) {
+            console.error("Failed to log usage:", err);
+        }
         setLoggedUsage(0);
     };
 
