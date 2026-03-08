@@ -30,15 +30,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Trash2 } from "lucide-react";
 
 type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    onDeleteRows: (rows: TData[]) => void;
 };
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    onDeleteRows,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -62,6 +65,13 @@ export function DataTable<TData, TValue>({
     });
 
     const nameColumn = table.getColumn("name");
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const hasSelection = selectedRows.length > 0;
+
+    const handleDelete = () => {
+        onDeleteRows(selectedRows.map((row) => row.original));
+        setRowSelection({});
+    };
 
     return (
         <div className="w-full">
@@ -97,6 +107,17 @@ export function DataTable<TData, TValue>({
                             ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
+                {hasSelection && (
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleDelete}
+                        className="flex items-center gap-1"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        Delete ({selectedRows.length})
+                    </Button>
+                )}
             </div>
 
             <div className="rounded-md border">
