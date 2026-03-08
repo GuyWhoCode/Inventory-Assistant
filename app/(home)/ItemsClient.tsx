@@ -2,10 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+    CardFooter,
+} from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { Item } from "@/types";
-
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 async function fetchItems(): Promise<Item[]> {
     const res = await fetch(`/api/items`, {
@@ -100,7 +110,7 @@ function ItemCard({ item }: { item: Item }) {
 export default function ItemsClient() {
     const {
         data: items,
-        isLoading,
+        isPending,
         isError,
         error,
     } = useQuery<Item[]>({
@@ -112,30 +122,35 @@ export default function ItemsClient() {
         <div className="p-6 max-w-6xl mx-auto space-y-6">
             <header className="flex items-baseline gap-3 border-b pb-4">
                 <h1 className="text-2xl font-bold tracking-tight">Items</h1>
-                {!isLoading && items && (
-                    <span className="text-xs text-muted-foreground border rounded-full px-2 py-0.5 font-mono">
+                {!isPending && items && (
+                    <Badge variant="outline" className="font-mono">
                         {items.length} entries
-                    </span>
+                    </Badge>
                 )}
             </header>
-
-            {isLoading && <LoadingState />}
-
+            {isPending && <LoadingState />}
             {isError && (
-                <div
-                    className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive"
-                    role="alert"
-                >
-                    <p className="font-medium">Failed to load items.</p>
-                    <pre className="mt-1 text-xs opacity-70">
+                <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Failed to load items</AlertTitle>
+                    <AlertDescription>
                         {error instanceof Error
                             ? error.message
                             : "Unknown error"}
-                    </pre>
+                    </AlertDescription>
+                </Alert>
+            )}
+            {items && items.length === 0 && (
+                <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
+                    <p className="text-muted-foreground text-sm">
+                        No items found.
+                    </p>
+                    <Button asChild>
+                        <Link href="/initialize">Initialize Inventory</Link>
+                    </Button>
                 </div>
             )}
-
-            {items && (
+            {items && items.length > 0 && (
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {items.map((item) => (
                         <ItemCard key={item.id} item={item} />

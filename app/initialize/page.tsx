@@ -17,6 +17,7 @@ function InitializeInfo() {
 
                 <ProcessInventoryButton />
                 
+                <br />
                 <Link href="/">Go back to Dashboard</Link>
             </div>
         </ItemsProvider>

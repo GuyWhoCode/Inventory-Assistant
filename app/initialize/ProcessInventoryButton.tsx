@@ -40,7 +40,7 @@ function ProcessInventoryButton() {
     };
 
     return (
-        <Button onClick={handleProcessInventory} disabled={isLoading}>
+        <Button onClick={handleProcessInventory} disabled={isLoading} className="mx-auto block">
             {isLoading ? "Processing..." : "Process Inventory Entry"}
         </Button>
     );
