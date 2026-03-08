@@ -37,21 +37,6 @@ export default function ItemDetail({ id }: { id: string }) {
                 .then((r) => r.logs),
     });
 
-    const handleUsageLogSubmit = async (usage_amount: number) => {
-        const response = await fetch("/api/usage-log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ item_id: parseInt(id), usage_amount }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        await queryClient.invalidateQueries({ queryKey: ["items", id] });
-        await queryClient.invalidateQueries({ queryKey: ["usage-logs", id] });
-    };
-
     if (itemPending || logsPending) return <p>Loading...</p>;
 
     if (!item) {
@@ -65,7 +50,7 @@ export default function ItemDetail({ id }: { id: string }) {
 
     return (
         <div className="p-8">
-            <ItemCard item={item} onUsageLogSubmit={handleUsageLogSubmit} />
+            <ItemCard item={item} />
             <br />
             <ChartLineDots
                 data={(logs ?? []).map((log) => ({

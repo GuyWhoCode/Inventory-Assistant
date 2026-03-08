@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Trash2, Leaf, AlertTriangle } from "lucide-react";
+import { Trash2, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -25,8 +25,14 @@ function ItemCard({ item }: { item: Item }) {
 
     const [name, setName] = useState(item.name);
     const [quantity, setQuantity] = useState(item.quantity);
+    const [expiration, setExpiration] = useState(
+        new Date(item.expiration).toISOString().split("T")[0]
+    );
     const [loggedUsage, setLoggedUsage] = useState<number>(0);
-    const isDirty = name !== item.name || quantity !== item.quantity;
+    const isDirty =
+        name !== item.name ||
+        quantity !== item.quantity ||
+        expiration !== new Date(item.expiration).toISOString().split("T")[0];
 
     const estimatedDaysRemaining =
         item.usage_rate > 0 ? Math.floor(quantity / item.usage_rate) : null;
@@ -36,23 +42,17 @@ function ItemCard({ item }: { item: Item }) {
             ? new Date(Date.now() + estimatedDaysRemaining * 24 * 60 * 60 * 1000)
             : null;
 
-    const expirationDate = new Date(item.expiration);
+    const expirationDate = new Date(expiration);
 
     const isExpirationRisk =
         projectedDepletionDate !== null &&
         expirationDate < projectedDepletionDate;
 
-    const formattedExpiration = expirationDate.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    });
-
     async function handleSave() {
         await fetch(`/api/items/${item.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, quantity }),
+            body: JSON.stringify({ name, quantity, expiration }),
         });
         toast.success("Item updated successfully");
         await queryClient.invalidateQueries({ queryKey: ["items", id] });
@@ -148,9 +148,17 @@ function ItemCard({ item }: { item: Item }) {
                                 {" "}days
                             </span>
                         </p>
-                        <p className="text-xs text-muted-foreground font-mono">
-                            Expires: {formattedExpiration}
-                        </p>
+                        <div className="flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground font-mono whitespace-nowrap">
+                                Expires:
+                            </p>
+                            <Input
+                                type="date"
+                                value={expiration}
+                                onChange={(e) => setExpiration(e.target.value)}
+                                className="text-xs text-muted-foreground font-mono border-none shadow-none px-0 h-auto py-0 w-32 cursor-pointer"
+                            />
+                        </div>
                     </div>
 
                     {/* Log Usage */}

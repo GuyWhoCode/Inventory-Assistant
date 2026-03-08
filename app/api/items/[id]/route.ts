@@ -21,11 +21,11 @@ export async function PATCH(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params
-    const { name, quantity } = await request.json()
+    const { name, quantity, expiration } = await request.json()
 
     const { rowCount } = await db.query(
-        "UPDATE ITEMS SET name = $1, quantity = $2 WHERE id = $3",
-        [name, quantity, id]
+        "UPDATE ITEMS SET name = $1, quantity = $2, expiration = $3 WHERE id = $4",
+        [name, quantity, expiration, id]
     )
 
     if (rowCount === 0) {
