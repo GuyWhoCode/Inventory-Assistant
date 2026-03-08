@@ -22,7 +22,7 @@ export default async function RootLayout({
             <body>
                 <QueryProvider>
                     {children}
-                    <Toaster position="bottom-right" />
+                    <Toaster position="bottom-right" closeButton />
                 </QueryProvider>
             </body>
         </html>

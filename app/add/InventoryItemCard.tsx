@@ -46,11 +46,6 @@ function InventoryItemCard() {
             return;
 
         try {
-            // await fetch("/api/items", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(cleaned),
-            // });
             addItem(cleaned);
 
             toast.success("Item saved", {

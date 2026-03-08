@@ -18,14 +18,17 @@ if (process.env.NODE_ENV !== "production") {
     globalForPg.pool = db;
 }
 
+let initialized = false;
 export async function initDB() {
-    // await db.query(`
-    //     DROP TABLE IF EXISTS ITEMS CASCADE;
-    //     `);
-    // await db.query(`
-    //     DROP TABLE IF EXISTS USAGE_LOGS;
-    //     `);
+    if (initialized) return;
+    initialized = true;
 
+    await db.query(`
+        DROP TABLE IF EXISTS ITEMS CASCADE;
+        `);
+    await db.query(`
+        DROP TABLE IF EXISTS USAGE_LOGS;
+        `);
 
     await db.query(`
     CREATE TABLE IF NOT EXISTS ITEMS (

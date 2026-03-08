@@ -58,13 +58,13 @@ function LoadingState() {
 function ItemCard({ item }: { item: Item }) {
     const router = useRouter();
     const handleClick = () => {
-        console.log(item.id);
         router.push(`/items/${item.id}`);
     };
 
     return (
         <Card
             className="cursor-pointer transition-colors hover:bg-muted/50"
+            id = {`item-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
             onClick={handleClick}
         >
             <CardHeader className="pb-2">
