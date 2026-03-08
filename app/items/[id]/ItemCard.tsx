@@ -9,7 +9,8 @@ import {
     CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Trash2, Leaf } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trash2, Leaf, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,6 +27,26 @@ function ItemCard({ item }: { item: Item }) {
     const [quantity, setQuantity] = useState(item.quantity);
     const [loggedUsage, setLoggedUsage] = useState<number>(0);
     const isDirty = name !== item.name || quantity !== item.quantity;
+
+    const estimatedDaysRemaining =
+        item.usage_rate > 0 ? Math.floor(quantity / item.usage_rate) : null;
+
+    const projectedDepletionDate =
+        estimatedDaysRemaining !== null
+            ? new Date(Date.now() + estimatedDaysRemaining * 24 * 60 * 60 * 1000)
+            : null;
+
+    const expirationDate = new Date(item.expiration);
+
+    const isExpirationRisk =
+        projectedDepletionDate !== null &&
+        expirationDate < projectedDepletionDate;
+
+    const formattedExpiration = expirationDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 
     async function handleSave() {
         await fetch(`/api/items/${item.id}`, {
@@ -61,25 +82,17 @@ function ItemCard({ item }: { item: Item }) {
             });
 
             if (!response.ok) {
-                throw new Error(
-                    `Request failed with status ${response.status}`,
-                );
+                throw new Error(`Request failed with status ${response.status}`);
             }
 
             toast.success(`Logged usage of ${loggedUsage} for ${item.name}`);
             await queryClient.invalidateQueries({ queryKey: ["items", id] });
-            await queryClient.invalidateQueries({
-                queryKey: ["usage-logs", id],
-            });
+            await queryClient.invalidateQueries({ queryKey: ["usage-logs", id] });
         } catch (err) {
             console.error("Failed to log usage:", err);
             toast.error("Failed to log usage. Please try again.");
         }
         setLoggedUsage(0);
-    }
-
-    function handleSustainable() {
-        // hook up to your procurement suggestion logic
     }
 
     return (
@@ -96,94 +109,93 @@ function ItemCard({ item }: { item: Item }) {
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className="flex flex-row items-center gap-0">
-                {/* Quantity */}
-                <div className="flex flex-col pr-6">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                        Quantity
-                    </p>
-                    <Input
-                        type="number"
-                        value={quantity}
-                        onChange={(e) => setQuantity(Number(e.target.value))}
-                        className="text-7xl font-bold tabular-nums border-none shadow-none px-0 w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-pointer"
-                    />
-                </div>
-
-                {/* Avg Usage Rate */}
-                <div className="flex flex-col gap-1 px-6 border-l">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                        Avg Usage Rate
-                    </p>
-                    <p className="text-2xl font-semibold tabular-nums">
-                        {item.usage_rate}{" "}
-                        <span className="text-sm font-normal text-muted-foreground">
-                            / day
-                        </span>
-                    </p>
-                </div>
-
-                {/* Est. Days Remaining */}
-                <div className="flex flex-col gap-1 px-6 border-l">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                        Est. Days Remaining
-                    </p>
-                    <p className="text-2xl font-semibold tabular-nums">
-                        {item.usage_rate > 0
-                            ? Math.floor(quantity / item.usage_rate)
-                            : "—"}
-                        <span className="text-sm font-normal text-muted-foreground">
-                            {" "}
-                            days
-                        </span>
-                    </p>
-                </div>
-
-                {/* Log Usage */}
-                <div className="flex flex-col gap-2 px-6 border-l">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                        Log Today&apos;s Usage
-                    </p>
-                    <div className="flex items-center gap-2">
+            <CardContent className="flex flex-col gap-6">
+                <div className="flex flex-row items-center gap-0">
+                    {/* Quantity */}
+                    <div className="flex flex-col pr-6">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                            Quantity
+                        </p>
                         <Input
                             type="number"
-                            value={loggedUsage}
-                            onChange={(e) =>
-                                setLoggedUsage(Number(e.target.value))
-                            }
-                            placeholder="0"
-                            className="w-24 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            value={quantity}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            className="text-7xl font-bold tabular-nums border-none shadow-none px-0 w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-pointer"
                         />
+                    </div>
+
+                    {/* Avg Usage Rate */}
+                    <div className="flex flex-col gap-1 px-6 border-l">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                            Avg Usage Rate
+                        </p>
+                        <p className="text-2xl font-semibold tabular-nums">
+                            {item.usage_rate}{" "}
+                            <span className="text-sm font-normal text-muted-foreground">
+                                / day
+                            </span>
+                        </p>
+                    </div>
+
+                    {/* Est. Days Remaining */}
+                    <div className="flex flex-col gap-1 px-6 border-l">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                            Est. Days Remaining
+                        </p>
+                        <p className="text-2xl font-semibold tabular-nums">
+                            {estimatedDaysRemaining !== null ? estimatedDaysRemaining : "—"}
+                            <span className="text-sm font-normal text-muted-foreground">
+                                {" "}days
+                            </span>
+                        </p>
+                        <p className="text-xs text-muted-foreground font-mono">
+                            Expires: {formattedExpiration}
+                        </p>
+                    </div>
+
+                    {/* Log Usage */}
+                    <div className="flex flex-col gap-2 px-6 border-l">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                            Log Today&apos;s Usage
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                type="number"
+                                value={loggedUsage}
+                                onChange={(e) => setLoggedUsage(Number(e.target.value))}
+                                placeholder="0"
+                                className="w-24 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleLogUsage}
+                            >
+                                Log
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col gap-2 ml-auto pl-6 border-l">
                         <Button
                             variant="outline"
-                            size="sm"
-                            onClick={handleLogUsage}
+                            className="flex flex-col h-24 w-44 gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                            onClick={handleDelete}
                         >
-                            Log
+                            <Trash2 className="h-5 w-5" />
                         </Button>
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-2 ml-auto pl-6 border-l">
-                    <Button
-                        variant="outline"
-                        className="flex flex-col h-24 w-44 gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
-                        onClick={handleDelete}
-                    >
-                        <Trash2 className="h-5 w-5" />
-                    </Button>
-                    <Button
-                        variant="outline"
-                        className="flex flex-col h-24 w-44 gap-2 text-green-600 border-green-600/30 hover:bg-green-600/10 hover:text-green-700"
-                        onClick={handleSustainable}
-                    >
-                        <Leaf className="h-5 w-5" />
-                        <span className="text-xs text-center leading-tight">
-                            Suggest Sustainable Procurement
-                        </span>
-                    </Button>
-                </div>
+                {isExpirationRisk && (
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertDescription>
+                            At current usage rate, this item may expire before full consumption.
+                        </AlertDescription>
+                    </Alert>
+                )}
             </CardContent>
 
             <CardFooter className="flex items-center justify-between">
