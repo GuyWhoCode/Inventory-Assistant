@@ -260,7 +260,7 @@ test.describe("Inventory Management User Flow", () => {
         // Step 12: Reduce quantity
         const quantityField = page.locator('input[type="number"]').first();
         await quantityField.clear();
-        await quantityField.fill("3");
+        await quantityField.fill("100");
 
         // Step 13: Save and dismiss the toast
         const saveBtn = page.locator('button:has-text("Save")').first();
