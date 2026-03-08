@@ -33,7 +33,7 @@ export async function initDB() {
         name VARCHAR(255) NOT NULL,
         quantity INTEGER,
         expiration DATE,
-        usage_rate VARCHAR(50),
+        usage_rate NUMERIC DEFAULT 0,
         created_at TIMESTAMPTZ DEFAULT NOW()
     )
       `);

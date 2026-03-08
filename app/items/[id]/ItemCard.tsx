@@ -13,11 +13,15 @@ import { Trash2, Leaf } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Item } from "@/types";
 import { toast } from "sonner";
 
 function ItemCard({ item }: { item: Item }) {
     const router = useRouter();
+    const queryClient = useQueryClient();
+    const id = String(item.id);
+
     const [name, setName] = useState(item.name);
     const [quantity, setQuantity] = useState(item.quantity);
     const [loggedUsage, setLoggedUsage] = useState<number>(0);
@@ -30,7 +34,7 @@ function ItemCard({ item }: { item: Item }) {
             body: JSON.stringify({ name, quantity }),
         });
         toast.success("Item updated successfully");
-        router.refresh();
+        await queryClient.invalidateQueries({ queryKey: ["items", id] });
     }
 
     async function handleDelete() {
@@ -44,10 +48,10 @@ function ItemCard({ item }: { item: Item }) {
         }
     }
 
-    const handleLogUsage = () => {
+    async function handleLogUsage() {
         if (loggedUsage <= 0) return;
         try {
-            fetch("/api/usage-log", {
+            const response = await fetch("/api/usage-log", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -55,13 +59,24 @@ function ItemCard({ item }: { item: Item }) {
                     usage_amount: loggedUsage,
                 }),
             });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Request failed with status ${response.status}`,
+                );
+            }
+
             toast.success(`Logged usage of ${loggedUsage} for ${item.name}`);
+            await queryClient.invalidateQueries({ queryKey: ["items", id] });
+            await queryClient.invalidateQueries({
+                queryKey: ["usage-logs", id],
+            });
         } catch (err) {
             console.error("Failed to log usage:", err);
             toast.error("Failed to log usage. Please try again.");
         }
         setLoggedUsage(0);
-    };
+    }
 
     function handleSustainable() {
         // hook up to your procurement suggestion logic

@@ -2,7 +2,7 @@ import randomInt from "./randomInt";
 
 // Constants
 const COUNT = 30;
-const MIN_VALUE = 3;
+const MIN_VALUE = 1;
 const MAX_VALUE = 35;
 
 

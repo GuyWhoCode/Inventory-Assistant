@@ -3,10 +3,14 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useItems } from "./ItemsContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 function ProcessInventoryButton() {
     const { items } = useItems();
     const [isLoading, setIsLoading] = useState(false);
+    const queryClient = useQueryClient();
+    const router = useRouter();
 
     const handleProcessInventory = async () => {
         setIsLoading(true);
@@ -25,8 +29,9 @@ function ProcessInventoryButton() {
                 );
             }
 
-            const data = await response.json();
+            await queryClient.invalidateQueries({ queryKey: ["items"] });
             toast.success("Inventory processed successfully");
+            router.push("/");
         } catch (error) {
             toast.error("Failed to process inventory", {
                 description:
@@ -40,7 +45,11 @@ function ProcessInventoryButton() {
     };
 
     return (
-        <Button onClick={handleProcessInventory} disabled={isLoading} className="mx-auto block">
+        <Button
+            onClick={handleProcessInventory}
+            disabled={isLoading}
+            className="mx-auto block"
+        >
             {isLoading ? "Processing..." : "Process Inventory Entry"}
         </Button>
     );
