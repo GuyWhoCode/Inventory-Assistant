@@ -10,10 +10,14 @@ Estimated Time Spent:
 
 
 ### Prerequisites:
+- Docker
+- A JavaScript runtime and bundler (Node.JS, Bun.JS, pnpm)
 
 
 ### Run Commands:
-- bun dev
+- bun install (or npm install)
+- bun dev (or npm run dev)
+
 
 ### Test Commands:
 
@@ -29,10 +33,11 @@ Yes.
 
 
 ### How did you verify the suggestions?
+A mix of relying on existing knowledge and skepticism. 
 
 
 ### Give one example of a suggestion you rejected or changed:
-
+Barcode scanner hybrid format for inventory entry.
 
 
 
@@ -47,15 +52,17 @@ Yes.
 
 ### What did you cut to stay within the 4–6 hour limit?
 - Cut the expansion of sustainable procurement alternatives
+  - Requires case study and deep dive into understanding tolerance for possible solutions (what to include / exclude)
 
 
 
 ### What would you build next if you had more time?
 - Provide more options for sustainable procurement alternatives
-
+- Remove the manual entry for usage log and calculate daily usage based on quantity adjustments
 
 
 ### Known limitations:
+- All or nothing approach with AI image recognition. If AI can't recognize the object clearly, then it will not appear and must be manually inputted.
 
 
 
