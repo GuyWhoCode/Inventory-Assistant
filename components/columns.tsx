@@ -2,15 +2,9 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Item } from "@/types";
 
-type InventoryItem = {
-    id: string;
-    name: string;
-    quantity: number;
-    expiration: string; // YYYY-MM-DD
-};
-
-export const columns: ColumnDef<InventoryItem>[] = [
+export const columns: ColumnDef<Item>[] = [
     {
         id: "select",
         header: ({ table }) => (

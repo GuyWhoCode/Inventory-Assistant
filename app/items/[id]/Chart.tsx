@@ -20,19 +20,6 @@ type UsageDataPoint = {
     usage_rate: number;
 };
 
-// const placeholderData: UsageDataPoint[] = Array.from(
-//     { length: 30 },
-//     (_, i) => ({
-//         day: i + 1,
-//         usage_rate: Math.floor(Math.random() * 50) + 10,
-//     }),
-// );
-
-// export function ChartLineDots({
-//     data = placeholderData,
-// }: {
-//     data?: UsageDataPoint[];
-// }) {
 export function ChartLineDots({ data }: { data: UsageDataPoint[] }) {
     return (
         <Card>

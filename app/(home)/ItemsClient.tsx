@@ -2,27 +2,23 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { Item } from "@/types";
 
-type Item = {
-  id: number;
-  name: string;
-  quantity: number;
-  created_at: string;
-};
 
 async function fetchItems(): Promise<Item[]> {
-  const res = await fetch(`/api/items`, {
-    // Opt out of Next.js fetch cache so React Query controls caching
-    cache: "no-store",
-  });
+    const res = await fetch(`/api/items`, {
+        // Opt out of Next.js fetch cache so React Query controls caching
+        cache: "no-store",
+    });
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ITEMS: ${res.statusText}`);
-  }
+    if (!res.ok) {
+        throw new Error(`Failed to fetch ITEMS: ${res.statusText}`);
+    }
 
-  return res.json().then(r => r.items);
+    return res.json().then((r) => r.items);
 }
-
 
 function ItemSkeleton() {
     return (
@@ -49,26 +45,53 @@ function LoadingState() {
 }
 
 // ─── Item card ───────────────────────────────────────────────────────────────
-
 function ItemCard({ item }: { item: Item }) {
+    const router = useRouter();
+    const handleClick = () => {
+        console.log(item.id);
+        router.push(`/items/${item.id}`);
+    };
+
     return (
-        <article className="rounded-lg border p-4 space-y-2 hover:bg-muted/50 transition-colors">
-            <span className="text-xs text-muted-foreground font-mono">
-                #{item.id}
-            </span>
-            <h2 className="font-semibold text-sm">{item.name}</h2>
-            <p className="text-sm text-muted-foreground">{item.description}</p>
-            <time
-                className="block text-xs text-muted-foreground border-t pt-2 font-mono"
-                dateTime={item.created_at}
-            >
-                {new Date(item.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                })}
-            </time>
-        </article>
+        <Card
+            className="cursor-pointer transition-colors hover:bg-muted/50"
+            onClick={handleClick}
+        >
+            <CardHeader className="pb-2">
+                <span className="text-xs text-muted-foreground font-mono">
+                    #{item.id}
+                </span>
+                <CardTitle className="text-sm">{item.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground space-y-1">
+                <p>Quantity: {item.quantity}</p>
+                <p>Usage rate: {item.usage_rate}</p>
+            </CardContent>
+            <CardFooter className="flex flex-col items-start gap-1 border-t pt-3">
+                <time
+                    className="text-xs text-muted-foreground font-mono"
+                    dateTime={item.expiration}
+                >
+                    Expires:{" "}
+                    {new Date(item.expiration).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    })}
+                </time>
+                <time
+                    className="text-xs text-muted-foreground font-mono"
+                    dateTime={item.created_at}
+                >
+                    Added:{" "}
+                    {new Date(item.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    })}
+                </time>
+            </CardFooter>
+        </Card>
     );
 }
 

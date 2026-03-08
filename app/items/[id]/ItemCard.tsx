@@ -13,19 +13,13 @@ import { Trash2, Leaf } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-type Item = {
-    id: number;
-    name: string;
-    quantity: number;
-    expiration: string;
-    usage_rate: string;
-};
+import { Item } from "@/types";
 
 function ItemCard({ item }: { item: Item }) {
     const router = useRouter();
     const [name, setName] = useState(item.name);
     const [quantity, setQuantity] = useState(item.quantity);
+    const [loggedUsage, setLoggedUsage] = useState<number>(0);
     const isDirty = name !== item.name || quantity !== item.quantity;
 
     async function handleSave() {
@@ -45,6 +39,13 @@ function ItemCard({ item }: { item: Item }) {
         }
     }
 
+    const handleLogUsage = () => {
+        if (loggedUsage <= 0) return;
+        // wire to your DB update here
+        console.log("Logging usage:", loggedUsage);
+        setLoggedUsage(0);
+    };
+
     function handleSustainable() {
         // hook up to your procurement suggestion logic
     }
@@ -55,7 +56,7 @@ function ItemCard({ item }: { item: Item }) {
                 <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-3xl font-semibold border-none shadow-none px-0 focus-visible:ring-0 w-auto"
+                    className="text-3xl font-semibold border-none shadow-none px-0 w-auto cursor-pointer"
                     placeholder="Item name..."
                 />
                 <CardTitle className="text-4xl text-muted-foreground whitespace-nowrap">
@@ -63,18 +64,79 @@ function ItemCard({ item }: { item: Item }) {
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className="flex flex-row items-start gap-4">
-                <Input
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="text-7xl font-bold tabular-nums border-none shadow-none px-0 focus-visible:ring-0 w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
+            <CardContent className="flex flex-row items-center gap-0">
+                {/* Quantity */}
+                <div className="flex flex-col pr-6">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                        Quantity
+                    </p>
+                    <Input
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
+                        className="text-7xl font-bold tabular-nums border-none shadow-none px-0 w-48 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-pointer"
+                    />
+                </div>
 
-                <div className="flex flex-col gap-2 ml-auto">
+                {/* Avg Usage Rate */}
+                <div className="flex flex-col gap-1 px-6 border-l">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Avg Usage Rate
+                    </p>
+                    <p className="text-2xl font-semibold tabular-nums">
+                        {item.usage_rate}{" "}
+                        <span className="text-sm font-normal text-muted-foreground">
+                            / day
+                        </span>
+                    </p>
+                </div>
+
+                {/* Est. Days Remaining */}
+                <div className="flex flex-col gap-1 px-6 border-l">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Est. Days Remaining
+                    </p>
+                    <p className="text-2xl font-semibold tabular-nums">
+                        {item.usage_rate > 0
+                            ? Math.floor(quantity / item.usage_rate)
+                            : "—"}
+                        <span className="text-sm font-normal text-muted-foreground">
+                            {" "}
+                            days
+                        </span>
+                    </p>
+                </div>
+
+                {/* Log Usage */}
+                <div className="flex flex-col gap-2 px-6 border-l">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Log Today's Usage
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <Input
+                            type="number"
+                            value={loggedUsage}
+                            onChange={(e) =>
+                                setLoggedUsage(Number(e.target.value))
+                            }
+                            placeholder="0"
+                            className="w-24 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleLogUsage}
+                        >
+                            Log
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col gap-2 ml-auto pl-6 border-l">
                     <Button
                         variant="outline"
-                        className="flex flex-col h-24 w-22 gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                        className="flex flex-col h-24 w-44 gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
                         onClick={handleDelete}
                     >
                         <Trash2 className="h-5 w-5" />

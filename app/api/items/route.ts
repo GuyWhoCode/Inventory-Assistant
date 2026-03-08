@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db as dbConnection } from "@/lib/db";
 
-
 // POST /api/items — add a new item
 export async function POST(req: NextRequest) {
     try {
@@ -34,7 +33,6 @@ export async function GET() {
         const result = await dbConnection.query(
             `SELECT * FROM ITEMS ORDER BY created_at DESC`,
         );
-        console.log(result.rows);
         return NextResponse.json({ items: result.rows }, { status: 200 });
     } catch (err) {
         console.error("DB error:", err);

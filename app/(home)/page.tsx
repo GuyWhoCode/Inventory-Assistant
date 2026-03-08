@@ -1,14 +1,15 @@
 import { DataTable } from "@/components/datatable";
 import { columns } from "@/components/columns";
 import Link from "next/link";
-import { InventoryItem } from "./InventoryItem";
 import ItemsClient from "./ItemsClient";
 import NotificationPanel from "./NotificationPanel";
+import { Item } from "@/types";
+
 
 function HomePage() {
-    const data: InventoryItem[] = [
-        { name: "Milk", quantity: 2, expiration: "2026-03-10" },
-        { name: "Eggs", quantity: 12, expiration: "2026-03-15" },
+    const data: Item[] = [
+        { name: "Milk", quantity: 2, expiration: "2026-03-10", usage_rate: 0.5, created_at: "2024-01-01T00:00:00Z", id: 1 },
+        { name: "Eggs", quantity: 12, expiration: "2026-03-15", usage_rate: 0.3, created_at: "2024-01-01T00:00:00Z", id: 2 },
     ];
 
     return (
