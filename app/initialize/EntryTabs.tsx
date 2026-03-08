@@ -15,9 +15,7 @@ export default function EntryTabs() {
                 <ItemScanner />
             </TabsContent>
             <TabsContent value="manual" className="flex justify-center">
-                <InventoryItemCard
-                    defaultValues={{ name: "", quantity: 0, expiration: "" }}
-                />
+                <InventoryItemCard />
             </TabsContent>
         </Tabs>
     );

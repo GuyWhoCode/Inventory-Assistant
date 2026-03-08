@@ -7,22 +7,17 @@ import { InputGroup } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
-import { InventoryItem } from "@/types";
-import randomInt from "@/lib/randomInt";
+import { useItems } from "./ItemsContext";
 
-type Props = {
-    defaultValues: InventoryItem;
-};
 
-function InventoryItemCard({ defaultValues }: Props) {
-    const USAGE_RATE_MAXIMUM = 20;
-    
-    const [name, setName] = useState(defaultValues.name);
-    const [quantity, setQuantity] = useState<number>(defaultValues.quantity);
-    const [expiration, setExpiration] = useState(defaultValues.expiration);
+function InventoryItemCard() {
+    const [name, setName] = useState("");
+    const [quantity, setQuantity] = useState<number>(0);
+    const [expiration, setExpiration] = useState("");
     const [errors, setErrors] = useState<{ name?: string; quantity?: string }>(
         {},
     );
+    const { addItem } = useItems();
 
 
     function validate(values: { name: string; quantity: number }) {
@@ -41,21 +36,24 @@ function InventoryItemCard({ defaultValues }: Props) {
         e.preventDefault();
 
         const cleaned = {
+            id: Math.floor(Math.random() * 1000000),
             name: name.trim(),
             quantity,
             expiration,
-            usageRate: randomInt(1, USAGE_RATE_MAXIMUM),
+            created_at: new Date().toISOString(),
+            usage_rate: 0
         };
 
         if (!validate({ name: cleaned.name, quantity: cleaned.quantity }))
             return;
 
         try {
-            await fetch("/api/items", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(cleaned),
-            });
+            // await fetch("/api/items", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify(cleaned),
+            // });
+            addItem(cleaned);
 
             toast.success("Item saved", {
                 description: `${cleaned.name} (qty ${cleaned.quantity}) added successfully.`,
@@ -150,9 +148,9 @@ function InventoryItemCard({ defaultValues }: Props) {
                         type="button"
                         variant="secondary"
                         onClick={() => {
-                            setName(defaultValues.name);
-                            setQuantity(defaultValues.quantity);
-                            setExpiration(defaultValues.expiration);
+                            setName("");
+                            setQuantity(0);
+                            setExpiration("");
                             setErrors({});
                         }}
                     >

@@ -7,7 +7,6 @@ import randomInt from "@/lib/randomInt";
 async function seedUsageLogs(rows: UsageLog[] = []) {
     const client = await dbConnection.connect();
 
-
     try {
         await client.query("BEGIN");
 
@@ -36,12 +35,12 @@ function daysAgo(n: number): Date {
     return d;
 }
 
-
 // POST /api/items — add a new item
 export async function POST(req: NextRequest) {
+    const USAGE_RATE_MAXIMUM = 20; // Max average usage rate for seeding
+
     try {
-        const { name, quantity, expiration } =
-            await req.json();
+        const { name, quantity, expiration } = await req.json();
         if (!name || typeof name !== "string") {
             return NextResponse.json(
                 { error: "Field 'name' is required and must be a string" },
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const averageUsageRate = randomInt(1, 20);
+        const averageUsageRate = randomInt(1, USAGE_RATE_MAXIMUM);
         // Initially set as random to generate test usage logs
 
         const result = await dbConnection.query(

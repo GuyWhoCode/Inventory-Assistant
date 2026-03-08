@@ -12,7 +12,7 @@ declare module "@tanstack/react-table" {
 }
 
 interface EditableCellProps {
-    value: string;
+    value: string | undefined;
     row: Row<Item>;
     columnId: string;
     table: Table<Item>;
@@ -28,10 +28,10 @@ function EditableCell({
     type = "text",
     className,
 }: EditableCellProps) {
-    const [value, setValue] = useState(initialValue);
+    const [value, setValue] = useState(initialValue ?? "");
 
     useEffect(() => {
-        setValue(initialValue);
+        setValue(initialValue ?? "");
     }, [initialValue]);
 
     const onBlur = () => {

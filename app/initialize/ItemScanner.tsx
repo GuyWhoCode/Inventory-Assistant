@@ -4,11 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Loader2 } from "lucide-react";
-
-type Item = {
-    name: string;
-    quantity: number;
-};
+import { useItems } from "./ItemsContext";
+import { Item } from "@/types";
 
 type ScanResult = {
     items: Item[];
@@ -19,6 +16,7 @@ type ScanResult = {
 export default function ItemScanner() {
     const [result, setResult] = useState<ScanResult | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { setItems } = useItems();
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -40,6 +38,7 @@ export default function ItemScanner() {
 
             const data: ScanResult = await res.json();
             setResult(data);
+            setItems(data.items);
             toast.success("Image scanned successfully.");
         } catch (err) {
             toast.error("Failed to scan image. Please try again.");
@@ -76,7 +75,7 @@ export default function ItemScanner() {
                 </label>
 
                 {/* Results */}
-                {result && (
+                {/* {result && (
                     <div className="space-y-2">
                         {result.uncertain && (
                             <p className="text-xs text-yellow-600">
@@ -103,7 +102,7 @@ export default function ItemScanner() {
                             ))}
                         </div>
                     </div>
-                )}
+                )} */}
             </CardContent>
         </Card>
     );
