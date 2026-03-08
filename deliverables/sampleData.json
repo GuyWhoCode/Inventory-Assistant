@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Whole Milk",
+        "quantity": 6,
+        "expiration": "2026-03-15",
+        "usage_rate": 1.5
+    },
+    {
+        "name": "Sourdough Bread",
+        "quantity": 2,
+        "expiration": "2026-03-10",
+        "usage_rate": 0.8
+    },
+    {
+        "name": "Cheddar Cheese",
+        "quantity": 3,
+        "expiration": "2026-04-01",
+        "usage_rate": 0.4
+    },
+    {
+        "name": "Orange Juice",
+        "quantity": 4,
+        "expiration": "2026-03-20",
+        "usage_rate": 1.2
+    },
+    {
+        "name": "Greek Yogurt",
+        "quantity": 8,
+        "expiration": "2026-03-18",
+        "usage_rate": 2.0
+    },
+    {
+        "name": "Butter",
+        "quantity": 2,
+        "expiration": "2026-05-10",
+        "usage_rate": 0.3
+    },
+    {
+        "name": "Eggs",
+        "quantity": 12,
+        "expiration": "2026-03-25",
+        "usage_rate": 3.5
+    },
+    {
+        "name": "Heavy Cream",
+        "quantity": 1,
+        "expiration": "2026-03-12",
+        "usage_rate": 0.6
+    }
+]

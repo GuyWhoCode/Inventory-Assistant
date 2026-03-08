@@ -45,7 +45,7 @@ export default function ItemScanner() {
     };
 
     return (
-        <Card className="w-full max-w-md" id="image-ai-scanner">
+        <Card className="w-full max-w-md">
             <CardHeader>
                 <CardTitle className="text-sm">Scan Items</CardTitle>
             </CardHeader>
@@ -68,6 +68,7 @@ export default function ItemScanner() {
                         className="hidden"
                         onChange={handleFileChange}
                         disabled={isLoading}
+                        id="image-ai-scanner"
                     />
                 </label>
             </CardContent>
